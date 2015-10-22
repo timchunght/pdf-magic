@@ -116,7 +116,7 @@ func ConvertToImgs(input_path string, page int, end_page int, format string) (st
 
 	for i := 1; i <= len(fis); i++ {
 		number := strconv.Itoa(i)
-		filenames = append(filenames, imgs_dir+"/"+number+".img")
+		filenames = append(filenames, imgs_dir+"/"+filename+"-" + number +"." + format)
 	}
 
 	filenames_joined := strings.Join(filenames, ",")
