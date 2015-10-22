@@ -3,7 +3,7 @@ import (
 	pdfmagic "pdfmagic"
 	"testing"
 	"strconv"
-	// "os/exec"
+	"os/exec"
 )
 
 
@@ -25,5 +25,13 @@ func TestConvert(t *testing.T) {
 		t.Errorf("Got: ")
 		t.Errorf(strconv.Itoa(len(imgs)))
 	}
+
+	CleanUp("tmp")
 }
 
+func CleanUp(dir string) {
+	cmd := exec.Command("rm", "-rf", dir)
+	err := cmd.Run()
+	if err != nil {
+	}
+}
