@@ -14,15 +14,15 @@ import (
 	"strings"
 )
 
-func Convert(url string, output_dir string, page int, end_page int, format string) (string, error) {
+func Convert(url string, output_dir string, page int, end_page int, format string) ([]string, error) {
 	path, err := Download(url, output_dir)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 
 	imgs, err := ConvertToImgs(path, page, end_page, format)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 
 	return imgs, nil
@@ -72,10 +72,10 @@ func mkImgsDir(input_path string) (string, string, error) {
 	return imgs_dir, filename, nil
 }
 
-func ConvertToImgs(input_path string, page int, end_page int, format string) (string, error) {
+func ConvertToImgs(input_path string, page int, end_page int, format string) ([]string, error) {
 	imgs_dir, filename, err := mkImgsDir(input_path)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 	if page > 0 {
 		page = page - 1
@@ -98,12 +98,12 @@ func ConvertToImgs(input_path string, page int, end_page int, format string) (st
 	// Run command
 	err = cmd.Run()
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 
 	dir, err := os.Open(imgs_dir)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 	defer dir.Close()
 
@@ -111,7 +111,7 @@ func ConvertToImgs(input_path string, page int, end_page int, format string) (st
 
 	fis, err := dir.Readdir(-1)
 	if err != nil {
-		return "", err
+		return []string{}, err
 	}
 
 	for i := 1; i <= len(fis); i++ {
@@ -119,8 +119,8 @@ func ConvertToImgs(input_path string, page int, end_page int, format string) (st
 		filenames = append(filenames, imgs_dir+"/"+filename+"-" + number +"." + format)
 	}
 
-	filenames_joined := strings.Join(filenames, ",")
-	return filenames_joined, nil
+	// filenames_joined := strings.Join(filenames, ",")
+	return filenames, nil
 }
 
 func randToken() string {
