@@ -14,18 +14,18 @@ import (
 	"strings"
 )
 
-func Convert(url string, output_dir string, page int) (string, error) {
+func Convert(url string, output_dir string, page int, end_page int, format string) (string, error) {
 	path, err := Download(url, output_dir)
 	if err != nil {
 		return "", err
 	}
 
-	pngs, err := ConvertToPngs(path, page, page)
+	imgs, err := ConvertToImgs(path, page, page, format)
 	if err != nil {
 		return "", err
 	}
 
-	return pngs, nil
+	return imgs, nil
 }
 
 func GetMimeTypeByFilename(base string) string {
@@ -58,22 +58,22 @@ func Download(url string, output_dir string) (string, error) {
 	return path, nil
 }
 
-func mkPngsDir(input_path string) (string, string, error) {
+func mkImgsDir(input_path string) (string, string, error) {
 	input_path_slice := strings.Split(input_path, "/")
 
-	pngs_dir := input_path + randToken() + "-pngs"
-	err := os.MkdirAll(pngs_dir, 0777)
+	imgs_dir := input_path + randToken() + "-imgs"
+	err := os.MkdirAll(imgs_dir, 0777)
 	if err != nil {
 		return "", "", err
 	}
 
 
 	filename := strings.Replace(input_path_slice[len(input_path_slice)-1], ".pdf", "", -1)
-	return pngs_dir, filename, nil
+	return imgs_dir, filename, nil
 }
 
-func ConvertToPngs(input_path string, page int, end_page int) (string, error) {
-	pngs_dir, filename, err := mkPngsDir(input_path)
+func ConvertToImgs(input_path string, page int, end_page int, format string) (string, error) {
+	imgs_dir, filename, err := mkImgsDir(input_path)
 	if err != nil {
 		return "", err
 	}
@@ -84,20 +84,25 @@ func ConvertToPngs(input_path string, page int, end_page int) (string, error) {
 
 		end_page = end_page - 1
 	}
-	// convert -density 300 img/bitcoin.pdf[0] -quality 100 test.jpg
+
+	
 	input_path = fmt.Sprint(input_path, "[", page, "-", end_page, "]") // s will be "[age:23]"
 	// fmt.Println(input_path)
-	output_path := fmt.Sprint(pngs_dir, "/", filename, "-%d.png")
+
+	output_path := fmt.Sprint(imgs_dir, "/", filename, "-%d.", format)
+	// set command
+	// i.e. convert -density 300 -scene 1 img/bitcoin.pdf[0-1] -quality 100 test-%d.jpg
 	cmd := exec.Command("convert", "-density", "300", "-scene", "1", input_path, "-quality", "100", output_path)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
+	// Run command
 	err = cmd.Run()
 	if err != nil {
 		return "", err
 	}
 
-	dir, err := os.Open(pngs_dir)
+	dir, err := os.Open(imgs_dir)
 	if err != nil {
 		return "", err
 	}
@@ -112,7 +117,7 @@ func ConvertToPngs(input_path string, page int, end_page int) (string, error) {
 
 	for i := 1; i <= len(fis); i++ {
 		number := strconv.Itoa(i)
-		filenames = append(filenames, pngs_dir+"/"+number+".png")
+		filenames = append(filenames, imgs_dir+"/"+number+".img")
 	}
 
 	filenames_joined := strings.Join(filenames, ",")
