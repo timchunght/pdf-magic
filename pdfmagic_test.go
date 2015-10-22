@@ -10,7 +10,9 @@ import (
 func TestConvert(t *testing.T) {
 	start_page := 1
 	end_page := 3
-	imgs, err := pdfmagic.Convert("http://www.theukulelereview.com/wp-content/uploads/2014/01/transcribed_corey_pathofwind.pdf", "./img", start_page, end_page, "png")
+	input_file := "http://www.theukulelereview.com/wp-content/uploads/2014/01/transcribed_corey_pathofwind.pdf"
+	output_path := "./tmp"
+	imgs, err := pdfmagic.Convert(input_file, output_path, start_page, end_page, "png")
 	if err != nil {
 		t.Errorf("Error", err)
 	}
