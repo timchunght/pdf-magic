@@ -26,7 +26,7 @@ func TestConvert(t *testing.T) {
 		t.Errorf(strconv.Itoa(len(imgs)))
 	}
 
-	CleanUp("tmp")
+	CleanUp(output_path)
 }
 
 func CleanUp(dir string) {
