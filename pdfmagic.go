@@ -20,7 +20,7 @@ func Convert(url string, output_dir string, page int, end_page int, format strin
 		return "", err
 	}
 
-	imgs, err := ConvertToImgs(path, page, page, format)
+	imgs, err := ConvertToImgs(path, page, end_page, format)
 	if err != nil {
 		return "", err
 	}
@@ -86,9 +86,8 @@ func ConvertToImgs(input_path string, page int, end_page int, format string) (st
 	}
 
 	
-	input_path = fmt.Sprint(input_path, "[", page, "-", end_page, "]") // s will be "[age:23]"
-	// fmt.Println(input_path)
-
+	input_path = fmt.Sprint(input_path, "[", page, "-", end_page, "]")
+	// Construct output path
 	output_path := fmt.Sprint(imgs_dir, "/", filename, "-%d.", format)
 	// set command
 	// i.e. convert -density 300 -scene 1 img/bitcoin.pdf[0-1] -quality 100 test-%d.jpg
