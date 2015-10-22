@@ -2,6 +2,7 @@ package pdfmagic
 
 import (
 	"bytes"
+	"crypto/rand"
 	"fmt"
 	"io"
 	"mime"
@@ -11,7 +12,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"crypto/rand"
 )
 
 func Convert(url string, output_dir string, page int) (string, error) {
@@ -20,7 +20,7 @@ func Convert(url string, output_dir string, page int) (string, error) {
 		return "", err
 	}
 
-	pngs, err := ConvertToPngs(path, page)
+	pngs, err := ConvertToPngs(path, page, page)
 	if err != nil {
 		return "", err
 	}
@@ -58,29 +58,36 @@ func Download(url string, output_dir string) (string, error) {
 	return path, nil
 }
 
-func mkPngsDir(input_path string) (string, error) {
-	pngs_dir := input_path + randToken() + "-pngs"
+func mkPngsDir(input_path string) (string, string, error) {
+	input_path_slice := strings.Split(input_path, "/")
 
+	pngs_dir := input_path + randToken() + "-pngs"
 	err := os.MkdirAll(pngs_dir, 0777)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return pngs_dir, nil
+
+	filename := strings.Replace(input_path_slice[len(input_path_slice)-1], ".pdf", "", -1)
+	return pngs_dir, filename, nil
 }
 
-func ConvertToPngs(input_path string, page int) (string, error) {
-	pngs_dir, err := mkPngsDir(input_path)
+func ConvertToPngs(input_path string, page int, end_page int) (string, error) {
+	pngs_dir, filename, err := mkPngsDir(input_path)
 	if err != nil {
 		return "", err
 	}
 	if page > 0 {
 		page = page - 1
 	}
+	if end_page > 0 {
+
+		end_page = end_page - 1
+	}
 	// convert -density 300 img/bitcoin.pdf[0] -quality 100 test.jpg
-	input_path = fmt.Sprint(input_path, "[", page, "-", page+2, "]") // s will be "[age:23]"
-	fmt.Println(input_path)
-	output_path := fmt.Sprint(pngs_dir, "/", page+1, ".png")
+	input_path = fmt.Sprint(input_path, "[", page, "-", end_page, "]") // s will be "[age:23]"
+	// fmt.Println(input_path)
+	output_path := fmt.Sprint(pngs_dir, "/", filename, "-%d.png")
 	cmd := exec.Command("convert", "-density", "300", "-scene", "1", input_path, "-quality", "100", output_path)
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -113,7 +120,7 @@ func ConvertToPngs(input_path string, page int) (string, error) {
 }
 
 func randToken() string {
-    b := make([]byte, 8)
-    rand.Read(b)
-    return fmt.Sprintf("%x", b)
+	b := make([]byte, 8)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
 }
