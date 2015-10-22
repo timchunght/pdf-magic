@@ -1,4 +1,4 @@
-package carve
+package pdfmagic
 
 import (
 	"bytes"

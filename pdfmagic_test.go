@@ -1,7 +1,7 @@
-package carve_test
+package pdfmagic_test
 
 import (
-	carve "github.com/motdotla/carve"
+	carve "github.com/timchunght/pdfmagic"
 	"testing"
 )
 

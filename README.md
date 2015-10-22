@@ -1,6 +1,5 @@
-# carve
+# pdf-magic
 
-<img src="https://raw.githubusercontent.com/motdotla/carve/master/carve.gif" alt="carve" align="right" width="220" />
 
 Convert PDFs into an array of PNGs. Takes a url of a PDF and converts its pages into individual PNGs.
 
@@ -15,11 +14,11 @@ package main
 
 import (
   "fmt"
-  carve "github.com/motdotla/carve"
+  pdfmagic "timchunght/pdfmagic"
 )
 
 func main() {
-  pngs, err := carve.Convert("http://some-url.com/path-to-file.pdf", "/local/path/to/output/dir")
+  pngs, err := pdfmagic.Convert("http://some-url.com/path-to-file.pdf", "/local/path/to/output/dir")
   if err != nil {
     fmt.Println(err)
   }
