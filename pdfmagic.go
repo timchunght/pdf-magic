@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"crypto/rand"
 )
 
 func Convert(url string, output_dir string, page int) (string, error) {
@@ -58,7 +59,7 @@ func Download(url string, output_dir string) (string, error) {
 }
 
 func mkPngsDir(input_path string) (string, error) {
-	var pngs_dir string = input_path + "-pngs"
+	pngs_dir := input_path + randToken() + "-pngs"
 
 	err := os.MkdirAll(pngs_dir, 0777)
 	if err != nil {
@@ -109,4 +110,10 @@ func ConvertToPngs(input_path string, page int) (string, error) {
 
 	filenames_joined := strings.Join(filenames, ",")
 	return filenames_joined, nil
+}
+
+func randToken() string {
+    b := make([]byte, 8)
+    rand.Read(b)
+    return fmt.Sprintf("%x", b)
 }
