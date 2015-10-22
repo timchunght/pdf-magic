@@ -2,6 +2,7 @@ package pdfmagic
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"mime"
 	"net/http"
@@ -12,13 +13,13 @@ import (
 	"strings"
 )
 
-func Convert(url string, output_dir string) (string, error) {
+func Convert(url string, output_dir string, page int) (string, error) {
 	path, err := Download(url, output_dir)
 	if err != nil {
 		return "", err
 	}
 
-	pngs, err := ConvertToPngs(path)
+	pngs, err := ConvertToPngs(path, page)
 	if err != nil {
 		return "", err
 	}
@@ -67,14 +68,19 @@ func mkPngsDir(input_path string) (string, error) {
 	return pngs_dir, nil
 }
 
-func ConvertToPngs(input_path string) (string, error) {
+func ConvertToPngs(input_path string, page int) (string, error) {
 	pngs_dir, err := mkPngsDir(input_path)
 	if err != nil {
 		return "", err
 	}
+	if page > 0 {
+		page = page - 1
+	}
 	// convert -density 300 img/bitcoin.pdf[0] -quality 100 test.jpg
-
-	cmd := exec.Command("convert", "-density", "300", input_path, "-quality", "100", pngs_dir+"/%d.png")
+	input_path = fmt.Sprint(input_path, "[", page, "-", page+2, "]") // s will be "[age:23]"
+	fmt.Println(input_path)
+	output_path := fmt.Sprint(pngs_dir, "/", page+1, ".png")
+	cmd := exec.Command("convert", "-density", "300", "-scene", "1", input_path, "-quality", "100", output_path)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
