@@ -5,8 +5,6 @@ Convert PDFs into an array of PNGs. Takes a url of a PDF and converts its pages 
 
 Word documents are planned in the future.
 
-[![BuildStatus](https://travis-ci.org/motdotla/carve.png?branch=master)](https://travis-ci.org/motdotla/carve)
-
 ## Usage
 
 ```Go
@@ -36,7 +34,7 @@ The output of pngs is a string of comma separated values of the path to the pngs
 ## Installation
 
 ```bash
-go get github.com/motdotla/carve
+go get github.com/timchunght/pdfmagic
 ```
 
 ## Running Tests
@@ -44,3 +42,8 @@ go get github.com/motdotla/carve
 ```bash
 go test -v
 ```
+
+###Credit
+
+Timchunght
+Carve
