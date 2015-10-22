@@ -72,8 +72,9 @@ func ConvertToPngs(input_path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// convert -density 300 img/bitcoin.pdf[0] -quality 100 test.jpg
 
-	cmd := exec.Command("mudraw", "-r", "200", "-m", "-o", pngs_dir+"/%d.png", input_path)
+	cmd := exec.Command("convert", "-density", "300", input_path, "-quality", "100", pngs_dir+"/%d.png")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = os.Stderr
